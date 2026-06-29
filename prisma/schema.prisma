@@ -1,0 +1,123 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Cliente {
+  id          Int       @id @default(autoincrement())
+  nombre      String // nombre de fantasía / referencia rápida
+  razonSocial String?
+  cuit        String?
+  condicionIva String? // "Responsable Inscripto" | "Monotributo" | "Exento" | "Consumidor Final" | "No Responsable"
+  email       String?
+  telefono    String?
+  // Condiciones de facturación
+  periodicidad String   @default("mensual") // "semanal" | "quincenal" | "mensual"
+  formaPago    String   @default("cuenta_corriente") // "efectivo" | "transferencia" | "cuenta_corriente"
+  activo      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  consumos    Consumo[]
+  facturas    Factura[]
+}
+
+// El catálogo de productos. El precio es el VIGENTE: al cargar un consumo se copia
+// a Consumo.precioUnitario, así cambiar el precio acá no afecta lo ya registrado.
+model Producto {
+  id        Int       @id @default(autoincrement())
+  nombre    String
+  categoria String // "vianda" | "desayuno" | "consumo_local"
+  precio    Float
+  activo    Boolean   @default(true)
+  createdAt DateTime  @default(now())
+  consumos  Consumo[]
+}
+
+// Un consumo es cada carga diaria: el cliente consumió `cantidad` de un producto.
+// precioUnitario es el snapshot del precio al momento de cargar (precio congelado).
+model Consumo {
+  id             Int       @id @default(autoincrement())
+  cliente        Cliente   @relation(fields: [clienteId], references: [id])
+  clienteId      Int
+  // Opcional: un "Consumo" genérico (mostrador) no referencia un producto del catálogo.
+  producto       Producto? @relation(fields: [productoId], references: [id])
+  productoId     Int?
+  cantidad       Int       @default(1)
+  precioUnitario Float // precio del producto al momento de la carga (no cambia después)
+  observaciones  String?
+  fecha          DateTime  @default(now())
+  creadoPor      String? // empleado que lo cargó
+  // Cuando se factura, se "congela" asignando facturaId. null = pendiente.
+  factura        Factura?  @relation(fields: [facturaId], references: [id])
+  facturaId      Int?
+  createdAt      DateTime  @default(now())
+
+  @@index([clienteId])
+  @@index([productoId])
+  @@index([facturaId])
+}
+
+// Una factura congela un conjunto de consumos en un punto del tiempo.
+// total = suma de (cantidad * precioUnitario) de los consumos incluidos.
+model Factura {
+  id         Int       @id @default(autoincrement())
+  cliente    Cliente   @relation(fields: [clienteId], references: [id])
+  clienteId  Int
+  fechaDesde DateTime
+  fechaHasta DateTime
+  total      Float
+  createdAt  DateTime  @default(now())
+  consumos   Consumo[]
+
+  @@index([clienteId])
+}
+
+// Empleado del local. El PIN se guarda hasheado. El rol define qué pantallas ve.
+model Empleado {
+  id         Int         @id @default(autoincrement())
+  nombre     String      @unique
+  rol        String // "empleado" | "dueno"
+  // Empleados: PIN. Dueño: usuario + contraseña fuerte. Ambos guardados como hash scrypt.
+  pinHash    String?
+  usuario    String?     @unique
+  passwordHash String?
+  // 2FA (preparado, sin UI todavía)
+  twoFactorSecret String?
+  twoFactorActivo Boolean @default(false)
+  // Bloqueo temporal por intentos fallidos
+  intentosFallidos Int    @default(0)
+  bloqueadoHasta   DateTime?
+  activo     Boolean     @default(true)
+  createdAt  DateTime    @default(now())
+  auditorias Auditoria[]
+}
+
+// Registro de cada cambio sobre los datos, para saber quién hizo qué y cuándo.
+model Auditoria {
+  id             Int       @id @default(autoincrement())
+  empleado       Empleado? @relation(fields: [empleadoId], references: [id])
+  empleadoId     Int?
+  empleadoNombre String // snapshot del nombre (por si el empleado se borra)
+  entidad        String // "consumo" | "producto" | "cliente" | "factura"
+  entidadId      Int
+  accion         String // "crear" | "editar" | "borrar" | "facturar" | "anular"
+  detalle        String? // texto legible, ej: "Cantidad 15 → 18"
+  createdAt      DateTime  @default(now())
+
+  @@index([entidad, entidadId])
+  @@index([createdAt])
+}
+
+// Cada corrida de facturación por lote (cierre de un período).
+model CierrePeriodo {
+  id             Int      @id @default(autoincrement())
+  fechaDesde     DateTime
+  fechaHasta     DateTime
+  cantFacturas   Int
+  totalFacturado Float
+  empleadoNombre String
+  createdAt      DateTime @default(now())
+}
