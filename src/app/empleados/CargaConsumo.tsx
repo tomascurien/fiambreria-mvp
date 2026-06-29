@@ -1,7 +1,6 @@
 "use client";
 
 import { useActionState, useEffect, useMemo, useRef, useState } from "react";
-import Link from "next/link";
 import { crearConsumo, type FormState } from "@/lib/actions";
 import { CATEGORIAS, normalizar } from "@/lib/constants";
 import { pesos } from "@/lib/format";
@@ -118,11 +117,7 @@ export default function CargaConsumo({
             </p>
           ) : (
             <p className="search-hint new">
-              No existe ese cliente.{" "}
-              <Link href="/empleados/clientes" style={{ textDecoration: "underline" }}>
-                Cargalo en Nuevo cliente
-              </Link>
-              .
+              Cliente nuevo: se creará «{query.trim()}» al guardar.
             </p>
           ))}
       </div>
@@ -238,7 +233,7 @@ export default function CargaConsumo({
         <div className={`alert ${state.ok ? "ok" : "err"}`}>{state.message}</div>
       )}
 
-      <button className="btn full" type="submit" disabled={pending || !clienteOk}>
+      <button className="btn full" type="submit" disabled={pending || query.trim() === ""}>
         {pending ? "Guardando…" : "Guardar consumo"}
       </button>
     </form>

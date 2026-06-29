@@ -18,7 +18,8 @@ export default async function EmpleadosPage() {
       select: { id: true, nombre: true, categoria: true, precio: true },
     }),
     prisma.consumo.findMany({
-      orderBy: { fecha: "desc" },
+      // Fecha descendente y, dentro del mismo día, lo último cargado primero (id desc).
+      orderBy: [{ fecha: "desc" }, { id: "desc" }],
       take: 30,
       include: { cliente: true, producto: true },
     }),

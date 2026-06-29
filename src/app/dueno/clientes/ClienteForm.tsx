@@ -41,7 +41,6 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
           name="nombre"
           required
           defaultValue={cliente?.nombre ?? ""}
-          placeholder="Nombre de fantasía o cómo lo conocen"
           autoComplete="off"
         />
       </div>

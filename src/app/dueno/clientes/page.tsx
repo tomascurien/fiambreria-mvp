@@ -5,8 +5,23 @@ import ClienteForm from "./ClienteForm";
 
 export const dynamic = "force-dynamic";
 
-export default async function ClientesPage() {
-  const clientes = await prisma.cliente.findMany({ orderBy: { nombre: "asc" } });
+const PASO = 30;
+const MAX = 2000;
+
+export default async function ClientesPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ n?: string }>;
+}) {
+  const { n } = await searchParams;
+  const limite = Math.min(Math.max(parseInt(n ?? "", 10) || PASO, PASO), MAX);
+
+  const [clientesRaw, total] = await Promise.all([
+    prisma.cliente.findMany({ orderBy: { nombre: "asc" }, take: limite + 1 }),
+    prisma.cliente.count(),
+  ]);
+  const hayMas = clientesRaw.length > limite;
+  const clientes = hayMas ? clientesRaw.slice(0, limite) : clientesRaw;
 
   return (
     <div>
@@ -24,44 +39,57 @@ export default async function ClientesPage() {
 
         {/* Listado */}
         <div className="card">
-          <div className="card-title">Clientes ({clientes.length})</div>
+          <div className="card-title">Clientes ({total})</div>
           {clientes.length === 0 ? (
             <div className="empty">Todavía no hay clientes.</div>
           ) : (
-            <table>
-              <thead>
-                <tr>
-                  <th>Cliente</th>
-                  <th>Facturación</th>
-                  <th></th>
-                </tr>
-              </thead>
-              <tbody>
-                {clientes.map((c) => (
-                  <tr key={c.id} style={c.activo ? undefined : { opacity: 0.55 }}>
-                    <td>
-                      <div className="cliente-name">
-                        {c.nombre}{" "}
-                        {!c.activo && <span className="badge facturado">inactivo</span>}
-                      </div>
-                      <div className="cliente-sub">
-                        {c.cuit ? `CUIT ${c.cuit}` : "Sin CUIT"}
-                        {c.condicionIva ? ` · ${c.condicionIva}` : ""}
-                      </div>
-                    </td>
-                    <td className="muted">
-                      {labelDe(PERIODICIDADES, c.periodicidad)} ·{" "}
-                      {labelDe(FORMAS_PAGO, c.formaPago)}
-                    </td>
-                    <td className="num">
-                      <Link className="btn ghost sm" href={`/dueno/clientes/${c.id}`}>
-                        Abrir →
-                      </Link>
-                    </td>
+            <>
+              <table>
+                <thead>
+                  <tr>
+                    <th>Cliente</th>
+                    <th>Facturación</th>
+                    <th></th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {clientes.map((c) => (
+                    <tr key={c.id} style={c.activo ? undefined : { opacity: 0.55 }}>
+                      <td>
+                        <div className="cliente-name">
+                          {c.nombre}{" "}
+                          {!c.activo && <span className="badge facturado">inactivo</span>}
+                        </div>
+                        <div className="cliente-sub">
+                          {c.cuit ? `CUIT ${c.cuit}` : "Sin CUIT"}
+                          {c.condicionIva ? ` · ${c.condicionIva}` : ""}
+                        </div>
+                      </td>
+                      <td className="muted">
+                        {labelDe(PERIODICIDADES, c.periodicidad)} ·{" "}
+                        {labelDe(FORMAS_PAGO, c.formaPago)}
+                      </td>
+                      <td className="num">
+                        <Link className="btn ghost sm" href={`/dueno/clientes/${c.id}`}>
+                          Abrir →
+                        </Link>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+
+              <div className="vermas">
+                <span className="muted">
+                  Mostrando {clientes.length} de {total}
+                </span>
+                {hayMas && (
+                  <Link href={`/dueno/clientes?n=${limite + PASO}`} scroll={false} className="btn ghost sm">
+                    Ver más
+                  </Link>
+                )}
+              </div>
+            </>
           )}
         </div>
       </div>

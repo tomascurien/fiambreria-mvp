@@ -1,5 +1,5 @@
 import { prisma } from "@/lib/db";
-import ClienteBasicoForm from "./ClienteBasicoForm";
+import ClienteForm from "@/app/dueno/clientes/ClienteForm";
 
 export const dynamic = "force-dynamic";
 
@@ -7,20 +7,20 @@ export default async function EmpleadoClientesPage() {
   const clientes = await prisma.cliente.findMany({
     where: { activo: true },
     orderBy: { nombre: "asc" },
-    select: { id: true, nombre: true, telefono: true },
+    select: { id: true, nombre: true, cuit: true, telefono: true },
   });
 
   return (
     <div>
       <div className="page-head">
         <h1>Nuevo cliente</h1>
-        <p>Cargá un cliente nuevo con lo básico. El dueño completa los datos fiscales después.</p>
+        <p>Cargá el cliente completo: nombre, contacto y datos fiscales.</p>
       </div>
 
       <div className="grid-2">
         <div className="card">
           <div className="card-title">Agregar cliente</div>
-          <ClienteBasicoForm />
+          <ClienteForm />
         </div>
 
         <div className="card">
@@ -32,6 +32,7 @@ export default async function EmpleadoClientesPage() {
               <thead>
                 <tr>
                   <th>Cliente</th>
+                  <th>CUIT</th>
                   <th>Teléfono</th>
                 </tr>
               </thead>
@@ -39,6 +40,7 @@ export default async function EmpleadoClientesPage() {
                 {clientes.map((c) => (
                   <tr key={c.id}>
                     <td>{c.nombre}</td>
+                    <td className="muted">{c.cuit || "—"}</td>
                     <td className="muted">{c.telefono || "—"}</td>
                   </tr>
                 ))}

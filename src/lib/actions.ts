@@ -143,8 +143,9 @@ function datosCliente(formData: FormData) {
   };
 }
 
+// Alta completa (nombre + contacto + datos fiscales). La pueden usar empleados y dueño.
 export async function crearCliente(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireDueno();
+  await requireSesion();
   const data = datosCliente(formData);
   if (!data.nombre) return { ok: false, message: "Escribí un nombre." };
 
@@ -163,6 +164,7 @@ export async function crearCliente(_prev: FormState, formData: FormData): Promis
   revalidatePath("/dueno");
   revalidatePath("/dueno/clientes");
   revalidatePath("/empleados");
+  revalidatePath("/empleados/clientes");
   return { ok: true, message: `Cliente "${data.nombre}" agregado correctamente.` };
 }
 
@@ -206,31 +208,6 @@ export async function toggleClienteActivo(formData: FormData) {
   revalidatePath("/dueno");
   revalidatePath("/dueno/clientes");
   revalidatePath(`/dueno/clientes/${id}`);
-}
-
-// Alta simple para empleados: solo nombre y teléfono, sin datos fiscales.
-export async function crearClienteBasico(_prev: FormState, formData: FormData): Promise<FormState> {
-  await requireSesion();
-  const nombre = str(formData.get("nombre"));
-  const telefono = str(formData.get("telefono")) || null;
-  if (!nombre) return { ok: false, message: "Escribí un nombre." };
-
-  const norm = normalizar(nombre);
-  const existentes = await prisma.cliente.findMany({ select: { nombre: true } });
-  if (existentes.some((c) => normalizar(c.nombre) === norm))
-    return { ok: false, message: `Ya existe el cliente "${nombre}".` };
-
-  const cliente = await prisma.cliente.create({ data: { nombre, telefono } });
-  await registrarAuditoria({
-    entidad: "cliente",
-    entidadId: cliente.id,
-    accion: "crear",
-    detalle: `Alta de cliente "${nombre}" (empleado)`,
-  });
-  revalidatePath("/empleados");
-  revalidatePath("/empleados/clientes");
-  revalidatePath("/dueno/clientes");
-  return { ok: true, message: `Cliente "${nombre}" agregado.` };
 }
 
 /* ---------- Productos ---------- */
@@ -324,21 +301,29 @@ export async function toggleProductoActivo(formData: FormData) {
 export async function crearConsumo(_prev: FormState, formData: FormData): Promise<FormState> {
   const sesion = await requireSesion();
 
-  // Resolver el cliente: por id (de la búsqueda) o match exacto por nombre.
-  // No se crea al vuelo: el alta va por la pantalla "Nuevo cliente".
+  // Resolver el cliente: por id (de la búsqueda) o por nombre. Si no existe ninguno
+  // equivalente, se crea uno nuevo (solo con el nombre; los datos se completan después).
   let clienteId = Number(formData.get("clienteId")) || 0;
+  let clienteCreado = false;
   if (!clienteId) {
     const nombre = str(formData.get("clienteNombre"));
-    if (!nombre) return { ok: false, message: "Elegí el cliente." };
+    if (!nombre) return { ok: false, message: "Elegí o escribí el cliente." };
     const norm = normalizar(nombre);
     const existentes = await prisma.cliente.findMany({ select: { id: true, nombre: true } });
     const match = existentes.find((c) => normalizar(c.nombre) === norm);
-    if (!match)
-      return {
-        ok: false,
-        message: `El cliente "${nombre}" no existe. Cargalo en "Nuevo cliente".`,
-      };
-    clienteId = match.id;
+    if (match) {
+      clienteId = match.id;
+    } else {
+      const nuevo = await prisma.cliente.create({ data: { nombre } });
+      clienteId = nuevo.id;
+      clienteCreado = true;
+      await registrarAuditoria({
+        entidad: "cliente",
+        entidadId: nuevo.id,
+        accion: "crear",
+        detalle: `Alta rápida desde carga: "${nuevo.nombre}"`,
+      });
+    }
   }
 
   const fechaStr = str(formData.get("fecha"));
@@ -383,7 +368,10 @@ export async function crearConsumo(_prev: FormState, formData: FormData): Promis
   revalidatePath("/dueno");
   revalidatePath(`/dueno/clientes/${clienteId}`);
 
-  return { ok: true, message: "Consumo guardado." };
+  return {
+    ok: true,
+    message: clienteCreado ? "Cliente nuevo creado y consumo guardado." : "Consumo guardado.",
+  };
 }
 
 // Solo se editan cantidad y observaciones. Producto y precio quedan congelados.

@@ -21,7 +21,7 @@ export default async function DashboardPage() {
       where: { createdAt: { gte: inicioMes } },
     }),
     prisma.consumo.findMany({
-      orderBy: { fecha: "desc" },
+      orderBy: [{ fecha: "desc" }, { id: "desc" }],
       take: 8,
       include: { cliente: true, producto: true },
     }),
@@ -76,11 +76,18 @@ export default async function DashboardPage() {
       </div>
 
       <div className="card" style={{ marginTop: 20 }}>
-        <div className="card-title">Últimos consumos</div>
+        <div className="flex-between">
+          <div className="card-title" style={{ marginBottom: 0 }}>
+            Últimos consumos
+          </div>
+          <Link href="/dueno/consumos" className="btn ghost sm">
+            Ver más →
+          </Link>
+        </div>
         {ultimos.length === 0 ? (
           <div className="empty">Todavía no hay consumos.</div>
         ) : (
-          <table>
+          <table style={{ marginTop: 12 }}>
             <thead>
               <tr>
                 <th>Fecha</th>
