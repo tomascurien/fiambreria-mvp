@@ -1,9 +1,9 @@
 :root {
-  --bg: #f7f4ee;
+  --bg: #f5f6f8;
   --surface: #ffffff;
   --ink: #2a2320;
   --ink-soft: #6b6259;
-  --line: #ebe4d8;
+  --line: #e4e7eb;
   --brand: #8c2f24;
   --brand-dark: #6f241b;
   --brand-soft: #f3e3df;
@@ -209,7 +209,7 @@ h3 {
   display: flex;
   gap: 6px;
   margin-bottom: 16px;
-  background: #f0ece3;
+  background: #eef0f3;
   border-radius: 10px;
   padding: 4px;
 }
@@ -391,7 +391,7 @@ textarea:focus {
   margin-bottom: 14px;
   border: 1px dashed var(--line);
   border-radius: 10px;
-  background: #fcfaf6;
+  background: #f7f8fa;
   font-size: 14px;
   color: var(--ink-soft);
 }
@@ -561,7 +561,7 @@ tr:last-child td {
   border: 1px solid var(--line);
   border-radius: 12px;
   padding: 16px;
-  background: #fcfaf6;
+  background: #f7f8fa;
 }
 .stat .label {
   font-size: 12px;
@@ -713,7 +713,7 @@ details.inline-edit summary:hover {
   color: var(--brand);
 }
 details.inline-edit[open] {
-  background: #fcfaf6;
+  background: #f7f8fa;
   border: 1px solid var(--line);
   border-radius: 10px;
   padding: 14px;
