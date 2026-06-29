@@ -1,0 +1,9 @@
+Guardá tu logo en esta carpeta con el nombre exacto:  logo.png
+
+- Formato: PNG (idealmente con fondo transparente).
+- Tamaño sugerido: ~200–400 px de alto.
+- La portada lo muestra automáticamente apenas el archivo exista.
+  Mientras no esté, se ve un monograma "EF" de respaldo.
+
+¿Tu logo es SVG en vez de PNG? Avisame y cambio la referencia a /logo.svg
+(es una línea en src/app/BrandLogo.tsx).

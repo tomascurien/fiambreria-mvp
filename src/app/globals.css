@@ -148,6 +148,52 @@ h3 {
   background: rgba(255, 255, 255, 0.28);
 }
 
+/* Portada de bienvenida */
+.portada {
+  min-height: 80vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 40px 16px;
+}
+.portada-logo {
+  height: 110px;
+  width: auto;
+  margin-bottom: 22px;
+}
+.portada-mono {
+  width: 104px;
+  height: 104px;
+  border-radius: 24px;
+  background: var(--brand);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 42px;
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 22px;
+  box-shadow: var(--shadow);
+}
+.portada h1 {
+  font-size: 36px;
+  font-weight: 800;
+}
+.portada .tagline {
+  color: var(--ink-soft);
+  max-width: 480px;
+  margin: 12px 0 28px;
+  font-size: 16px;
+}
+.portada-cta {
+  font-size: 16px;
+  padding: 13px 34px;
+  border-radius: 12px;
+}
+
 /* Login */
 .login-wrap {
   min-height: 70vh;
