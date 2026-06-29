@@ -18,7 +18,7 @@ export default function BrandLogo() {
   // eslint-disable-next-line @next/next/no-img-element
   return (
     <img
-      src="/logo.png"
+      src="/logo.jpg"
       alt="La Esquina del Fiambre"
       className="portada-logo"
       onError={() => setError(true)}
