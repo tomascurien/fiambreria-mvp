@@ -38,7 +38,7 @@ export default function FacturarPeriodo({
         onSubmit={(e) => {
           if (
             !confirm(
-              `Vas a generar ${preview.clientes} factura(s) por ${pesos(
+              `Vas a calcular ${preview.clientes} factura(s) por ${pesos(
                 preview.total,
               )}. ¿Confirmás el cierre del período?`,
             )
@@ -76,7 +76,7 @@ export default function FacturarPeriodo({
         </div>
 
         <button className="btn full" type="submit" disabled={pending || preview.clientes === 0}>
-          {pending ? "Generando…" : `Generar todas (${preview.clientes})`}
+          {pending ? "Calculando…" : `Calcular todas (${preview.clientes})`}
         </button>
       </form>
 
@@ -84,7 +84,7 @@ export default function FacturarPeriodo({
       {state.resultados.length > 0 && (
         <div style={{ marginTop: 16 }}>
           <div className="alert ok">
-            {state.cantOk} factura(s) generada(s) · {pesos(state.totalFacturado)}
+            {state.cantOk} factura(s) calculada(s) · {pesos(state.totalFacturado)}
           </div>
           <table>
             <thead>

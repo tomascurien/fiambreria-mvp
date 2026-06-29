@@ -42,7 +42,7 @@ export default async function FacturacionPage() {
     <div>
       <div className="page-head">
         <h1>Facturación por período</h1>
-        <p>Generá las facturas de todos los clientes con consumos pendientes, de una sola vez.</p>
+        <p>Calculá las facturas de todos los clientes con consumos pendientes, de una sola vez.</p>
       </div>
 
       <div className="grid-2">

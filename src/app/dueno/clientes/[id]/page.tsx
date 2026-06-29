@@ -101,9 +101,9 @@ export default async function ClienteDetalle({ params }: { params: Promise<{ id:
       </div>
 
       <div className="grid-2">
-        {/* ---- Generar factura ---- */}
+        {/* ---- Calcular factura ---- */}
         <div className="card">
-          <div className="card-title">Generar factura</div>
+          <div className="card-title">Calcular factura</div>
           {pend.length === 0 ? (
             <p className="muted">No hay consumos pendientes para facturar.</p>
           ) : (
@@ -129,7 +129,7 @@ export default async function ClienteDetalle({ params }: { params: Promise<{ id:
                   importar la antigüedad.
                 </p>
                 <button className="btn full" type="submit">
-                  Generar factura
+                  Calcular factura
                 </button>
               </form>
             </>
