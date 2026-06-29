@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect, useRef } from "react";
 import { crearCliente, editarCliente, type FormState } from "@/lib/actions";
-import { CONDICIONES_IVA, PERIODICIDADES, FORMAS_PAGO } from "@/lib/constants";
+import { CONDICIONES_IVA, FORMAS_PAGO } from "@/lib/constants";
 
 const initial: FormState = { ok: false, message: "" };
 
@@ -14,7 +14,6 @@ export type ClienteData = {
   condicionIva: string | null;
   email: string | null;
   telefono: string | null;
-  periodicidad: string;
   formaPago: string;
 };
 
@@ -79,27 +78,15 @@ export default function ClienteForm({ cliente }: { cliente?: ClienteData }) {
         </div>
       </div>
 
-      <div className="row">
-        <div className="field">
-          <label>Periodicidad de facturación</label>
-          <select name="periodicidad" defaultValue={cliente?.periodicidad ?? "mensual"}>
-            {PERIODICIDADES.map((p) => (
-              <option key={p.value} value={p.value}>
-                {p.label}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div className="field">
-          <label>Forma de pago</label>
-          <select name="formaPago" defaultValue={cliente?.formaPago ?? "cuenta_corriente"}>
-            {FORMAS_PAGO.map((f) => (
-              <option key={f.value} value={f.value}>
-                {f.label}
-              </option>
-            ))}
-          </select>
-        </div>
+      <div className="field">
+        <label>Forma de pago</label>
+        <select name="formaPago" defaultValue={cliente?.formaPago ?? "cuenta_corriente"}>
+          {FORMAS_PAGO.map((f) => (
+            <option key={f.value} value={f.value}>
+              {f.label}
+            </option>
+          ))}
+        </select>
       </div>
 
       {state.message && (

@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { crearFactura, anularFactura, toggleClienteActivo } from "@/lib/actions";
 import { pesos, fecha, aInputDate } from "@/lib/format";
-import { labelDe, PERIODICIDADES, FORMAS_PAGO } from "@/lib/constants";
+import { labelDe, FORMAS_PAGO } from "@/lib/constants";
 import ClienteForm from "../ClienteForm";
 
 export const dynamic = "force-dynamic";
@@ -58,10 +58,8 @@ export default async function ClienteDetalle({ params }: { params: Promise<{ id:
           {cliente.condicionIva || "IVA sin especificar"}
         </p>
         <p className="muted" style={{ marginTop: 2 }}>
-          Facturación {labelDe(PERIODICIDADES, cliente.periodicidad).toLowerCase()} ·{" "}
-          {labelDe(FORMAS_PAGO, cliente.formaPago)}
-          {" · "}
-          {cliente.email || "sin email"} · {cliente.telefono || "sin teléfono"}
+          {labelDe(FORMAS_PAGO, cliente.formaPago)} · {cliente.email || "sin email"} ·{" "}
+          {cliente.telefono || "sin teléfono"}
         </p>
 
         <details className="inline-edit">
@@ -76,7 +74,6 @@ export default async function ClienteDetalle({ params }: { params: Promise<{ id:
                 condicionIva: cliente.condicionIva,
                 email: cliente.email,
                 telefono: cliente.telefono,
-                periodicidad: cliente.periodicidad,
                 formaPago: cliente.formaPago,
               }}
             />

@@ -138,7 +138,6 @@ function datosCliente(formData: FormData) {
     condicionIva: str(formData.get("condicionIva")) || null,
     email: str(formData.get("email")) || null,
     telefono: str(formData.get("telefono")) || null,
-    periodicidad: str(formData.get("periodicidad")) || "mensual",
     formaPago: str(formData.get("formaPago")) || "cuenta_corriente",
   };
 }

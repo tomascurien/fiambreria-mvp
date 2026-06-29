@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { prisma } from "@/lib/db";
-import { labelDe, PERIODICIDADES, FORMAS_PAGO } from "@/lib/constants";
+import { labelDe, FORMAS_PAGO } from "@/lib/constants";
 import ClienteForm from "./ClienteForm";
 
 export const dynamic = "force-dynamic";
@@ -48,7 +48,7 @@ export default async function ClientesPage({
                 <thead>
                   <tr>
                     <th>Cliente</th>
-                    <th>Facturación</th>
+                    <th>Forma de pago</th>
                     <th></th>
                   </tr>
                 </thead>
@@ -65,10 +65,7 @@ export default async function ClientesPage({
                           {c.condicionIva ? ` · ${c.condicionIva}` : ""}
                         </div>
                       </td>
-                      <td className="muted">
-                        {labelDe(PERIODICIDADES, c.periodicidad)} ·{" "}
-                        {labelDe(FORMAS_PAGO, c.formaPago)}
-                      </td>
+                      <td className="muted">{labelDe(FORMAS_PAGO, c.formaPago)}</td>
                       <td className="num">
                         <Link className="btn ghost sm" href={`/dueno/clientes/${c.id}`}>
                           Abrir →

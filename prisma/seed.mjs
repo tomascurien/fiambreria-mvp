@@ -70,7 +70,6 @@ async function main() {
         condicionIva: "Responsable Inscripto",
         email: "admin@estudioperez.com",
         telefono: "299-4567890",
-        periodicidad: "mensual",
         formaPago: "transferencia",
       },
       {
@@ -80,14 +79,12 @@ async function main() {
         condicionIva: "Responsable Inscripto",
         email: "contacto@delvalle.com",
         telefono: "299-4112233",
-        periodicidad: "quincenal",
         formaPago: "cuenta_corriente",
       },
       {
         nombre: "Juan Gómez",
         condicionIva: "Monotributo",
         telefono: "299-5556677",
-        periodicidad: "mensual",
         formaPago: "efectivo",
       },
       {
@@ -97,7 +94,6 @@ async function main() {
         condicionIva: "Responsable Inscripto",
         email: "compras@clinicasm.com",
         telefono: "299-4778899",
-        periodicidad: "mensual",
         formaPago: "cuenta_corriente",
       },
     ].map((c) => prisma.cliente.create({ data: c })),

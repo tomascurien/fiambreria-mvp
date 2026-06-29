@@ -16,7 +16,6 @@ model Cliente {
   email       String?
   telefono    String?
   // Condiciones de facturación
-  periodicidad String   @default("mensual") // "semanal" | "quincenal" | "mensual"
   formaPago    String   @default("cuenta_corriente") // "efectivo" | "transferencia" | "cuenta_corriente"
   activo      Boolean   @default(true)
   createdAt   DateTime  @default(now())

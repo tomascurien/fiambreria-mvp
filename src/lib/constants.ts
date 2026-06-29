@@ -8,12 +8,6 @@ export const CONDICIONES_IVA = [
   "No Responsable",
 ] as const;
 
-export const PERIODICIDADES = [
-  { value: "semanal", label: "Semanal" },
-  { value: "quincenal", label: "Quincenal" },
-  { value: "mensual", label: "Mensual" },
-] as const;
-
 export const FORMAS_PAGO = [
   { value: "cuenta_corriente", label: "Cuenta corriente" },
   { value: "transferencia", label: "Transferencia" },
